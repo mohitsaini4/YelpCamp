@@ -15,36 +15,21 @@ var campgroundSchema = new mongoose.Schema({
 
 var Campground = mongoose.model("Campground", campgroundSchema);
 
-Campground.create(
-	{
-		name:"Salmon",
-		image:"https://pixabay.com/get/57e8d0424a5bae14f6da8c7dda793f7f1636dfe2564c704c732b7ed5904bc05e_340.jpg"
-	}
-	, function(err, campground){
-	if(err){
-		console.log(err);
-	}
-	else{
-		console.log("new campground created");
-	}
-
-	});
-
-var campgrounds = [
-	{name: "creek", image: "https://pixabay.com/get/52e3d5404957a514f6da8c7dda793f7f1636dfe2564c704c732b78dd9048c558_340.jpg"}, 
-	{name: "creek", image: "https://pixabay.com/get/52e3d5404957a514f6da8c7dda793f7f1636dfe2564c704c732b78dd9048c558_340.jpg"}
-	
-	]
 
 app.get("/", function(req, res){
 	res.render("landing.ejs");
 });
 
 app.get("/campgrounds", function(reg, res){
-	
+	//get all campgrounds
+	Campground.find({}, function(err, allcampgrounds){
+		if(err){
+			console.log(err);
+		} else{
+			res.render("campgrounds.ejs",{campgrounds: allcampgrounds});
 
-	res.render("campgrounds.ejs",{campgrounds: campgrounds});
-
+		}
+	});
 });
 
 app.post("/campgrounds", function(req, res){
@@ -54,7 +39,16 @@ app.post("/campgrounds", function(req, res){
 	var name = req.body.name;
 	var image = req.body.image;
 	var newCampground = { name: name, image: image};
-	campgrounds.push(newCampground);
+	
+	Campground.create( newCampground, function(err, campground){
+	if(err){
+		console.log(err);
+	}
+	else{
+		console.log("new campground created");
+	}
+	});
+
 	res.redirect("/campgrounds");
 	console.log("/campgrounds");
 });
