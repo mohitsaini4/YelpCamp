@@ -58,6 +58,15 @@ app.get("/campgrounds/new", function(req, res){
 	res.render("new.ejs");
 });
 
+app.get("/campgrounds/:id", function(req, res){
+	Campground.findById(req.params.id, function(err, foundCampground){
+		if(err){
+			console.log(err);
+		} else {
+			res.render("show",{campground: foundCampground});
+		}
+	})
+});
 
 app.listen(8080, function(){
 	console.log("Server Started");
