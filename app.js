@@ -39,7 +39,8 @@ app.post("/campgrounds", function(req, res){
 	// redirect back to campground page
 	var name = req.body.name;
 	var image = req.body.image;
-	var newCampground = { name: name, image: image};
+	var description = req.body.description;
+	var newCampground = { name: name, image: image, description: description};
 	
 	Campground.create( newCampground, function(err, campground){
 	if(err){
