@@ -4,6 +4,7 @@ var bodyParser = require("body-parser");
 var mongoose = require("mongoose");
 var Campground = require("./models/campground");
 var seedDB = require("./seeds.js");
+var Comment = require("./models/comment");
 
 
 mongoose.connect('mongodb://localhost:27017/myapp', {useNewUrlParser: true});
@@ -61,10 +62,48 @@ app.get("/campgrounds/:id", function(req, res){
 		if(err){
 			console.log(err);
 		} else {
+			console.log(foundCampground)
 			res.render("show.ejs",{campground: foundCampground});
 		}
 	})
 });
+
+//// comments routes
+
+app.get("/campgrounds/:id/comments/new", function(req, res){
+	Campground.findById(req.params.id).populate("comments").exec(function(err, campground){
+		if(err){
+			console.log(err);
+		}
+			else {
+				console.log(campground);
+				res.render("comments/new.ejs", {campground : campground});
+	
+			}
+		})
+	});
+
+app.post("/campgrounds/:id/comments", function(req, res){
+	Campground.findById(req.params.id,function(err, campground){
+		if(err){
+			console.log(err);
+			
+		} else{
+			
+			Comment.create(req.body.comment, function(err, comment){
+
+				if(err){
+					console.log(err);
+				} else {
+					campground.comments.push(comment);
+					campground.save();
+					res.redirect("/campgrounds/"+ campground._id);
+				}
+			});
+		}
+	});
+});
+
 
 app.listen(8080, function(){
 	console.log("Server Started");
