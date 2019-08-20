@@ -127,6 +127,31 @@ app.get("/register", function(req, res){
 	res.render("register.ejs");
 });
 
+app.post("/register", function(req, res){
+	var newUser = new User({username: req.body.username});
+	User.register(newUser, req.body.password, function(err, user){
+		if(err){
+			console.log(err);
+			return res.render("register.ejs");	
+			}
+		passport.authenticate("local")(req, res, function(){
+			res.redirect("/campgrounds");
+		});	
+	});
+});
+
+//show login form
+app.get("/login", function(req, res){
+	res.render("login");
+});
+
+app.post("/login", passport.authenticate("local",
+	{
+		successRedirect: "/campgrounds",
+	 	failureRedirect:"/login"
+	}), function(req, res){
+	
+});
 
 app.listen(8080, function(){
 	console.log("Server Started");
